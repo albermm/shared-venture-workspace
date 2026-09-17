@@ -94,6 +94,9 @@ For Render, create a Blueprint from this repository's `render.yaml`. Enter
 Render supplies `PORT`; no `.env` file is deployed. The public `/health`
 endpoint is used for health checks, while `/tools` and `/call` require the API
 key. This HTTP wrapper uses simple JSON endpoints rather than MCP over HTTP.
+If creating a Render web service manually, use `npm install && npm run build`
+as the build command and `npm run start` as the start command. Set the same
+three environment variables in the service dashboard.
 
 ---
 

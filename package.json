@@ -7,7 +7,7 @@
     "dev": "node --env-file=.env --import tsx src/mcp/server.ts",
     "dev:http": "PORT=3100 node --env-file=.env --watch --import tsx src/mcp/server.ts",
     "build": "tsc",
-    "start": "node --env-file=.env dist/mcp/server.js",
+    "start": "node dist/mcp/server.js",
     "start:http": "node dist/mcp/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
