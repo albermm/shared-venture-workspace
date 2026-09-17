@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://venture-workspace.local/schemas/payloads/critique.schema.json",
+  "title": "Critic Payload",
+  "type": "object",
+  "required": ["summary", "unsupported_assumptions", "failure_modes", "suggested_hypotheses"],
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "Short overall critique"
+    },
+    "unsupported_assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "failure_modes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["description", "severity"],
+        "properties": {
+          "description": { "type": "string" },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          }
+        }
+      }
+    },
+    "cheaper_alternatives": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "suggested_hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["statement", "type"],
+        "properties": {
+          "statement": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "problem", "customer", "value_prop", "willingness_to_pay",
+              "technical", "distribution", "unit_economics", "other"
+            ]
+          },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "falsification_tests": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

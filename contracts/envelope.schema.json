@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://venture-workspace.local/schemas/envelope.schema.json",
+  "title": "Agent Output Envelope",
+  "description": "Standard envelope for all agent outputs. Payload is flexible and validated separately when a payload_schema is known.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "run_id",
+    "agent",
+    "output_type",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Correlation ID for a single agent run (can group multiple outputs)"
+    },
+    "agent": {
+      "type": "object",
+      "required": ["id", "name", "provider", "role"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "type": "string",
+          "enum": ["xai", "openai", "anthropic", "human", "other"]
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "description": "e.g. ideator, critic, market_researcher, weekly_synthesizer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "e.g. critique, market_scan, idea_expansion, weekly_review, decision_proposal"
+    },
+    "input_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "default": []
+    },
+    "payload_schema": {
+      "type": "string",
+      "description": "Name/version of the payload schema used (optional but recommended)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Flexible content. Shape depends on output_type / payload_schema."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

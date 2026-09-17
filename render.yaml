@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: shared-venture-workspace
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:http
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: MCP_API_KEY
+        sync: false
