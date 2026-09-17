@@ -9,9 +9,11 @@ export function getSupabase(): SupabaseClient {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
-    throw new Error(
-      "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in the environment"
-    );
+    const missing = [
+      !url && "SUPABASE_URL",
+      !key && "SUPABASE_SERVICE_ROLE_KEY",
+    ].filter(Boolean);
+    throw new Error(`Missing environment variables: ${missing.join(", ")}`);
   }
 
   client = createClient(url, key, {
