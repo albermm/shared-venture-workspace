@@ -111,6 +111,79 @@ the built-in receiver. It requires the HMAC signature and returns `202` for a
 valid event. The receiver is the handoff point where your colleague can add
 the Grok bot processing code.
 
+### Instructions for the colleague bot
+
+If you are the bot developer, use this repository as the integration point:
+
+1. Pull the latest `main` branch:
+
+   ```bash
+   git clone https://github.com/albermm/shared-venture-workspace.git
+   cd shared-venture-workspace
+   git pull origin main
+   npm install
+   ```
+
+2. Configure the bot runtime. The bot needs these values, either in its own
+   Render environment or in a local `.env` that is never committed:
+
+   ```env
+   WORKSPACE_URL=https://shared-venture-workspace.onrender.com
+   MCP_API_KEY=<the workspace MCP API key>
+   GROK_WEBHOOK_SECRET=<the shared webhook secret>
+   GROK_API_KEY=<your xAI/Grok credential, if your bot uses one>
+   ```
+
+   The bot must not receive or use `SUPABASE_SERVICE_ROLE_KEY`. Only the
+   workspace server needs that credential.
+
+3. Receive `POST /webhooks/venture` events. Verify the signature before
+   processing: compute an HMAC-SHA256 digest of the exact raw request body with
+   `GROK_WEBHOOK_SECRET`, then compare it with the
+   `X-Webhook-Signature` header in the form `sha256=<hex digest>`. Accept only
+   `event == "idea.created"`; the complete idea is at `data.idea`.
+
+4. After receiving an idea, use the workspace API to read context and write
+   results. For example:
+
+   ```bash
+   curl -X POST "$WORKSPACE_URL/call" \
+     -H "Content-Type: application/json" \
+     -H "X-API-Key: $MCP_API_KEY" \
+     -d '{"tool":"get_project_summary","arguments":{"project_id":"PROJECT_UUID"}}'
+   ```
+
+   Typical bot workflow:
+
+   - call `get_project_summary` and `list_evidence`
+   - call `create_hypothesis` for testable claims
+   - call `create_analysis` with references to evidence or hypotheses
+   - call `create_experiment` for the next validation step
+
+   Every `/call` request has this shape:
+
+   ```json
+   {"tool":"create_analysis","arguments":{}}
+   ```
+
+5. Return HTTP `2xx` from the webhook after accepting the event. The workspace
+   webhook delivery is best effort, has a five-second timeout, and does not
+   retry. Make processing idempotent using the webhook `event_id` if the bot
+   queues work asynchronously.
+
+If the bot runs in this same Render service, put its processing code in the
+`/webhooks/venture` handler in `src/mcp/server.ts` (or call a service from that
+handler), deploy the service, and set:
+
+```env
+GROK_WEBHOOK_URL=https://shared-venture-workspace.onrender.com/webhooks/venture
+GROK_WEBHOOK_SECRET=<the same secret used by the bot>
+```
+
+If the bot runs as a separate service, set `GROK_WEBHOOK_URL` to that service's
+public HTTPS webhook URL instead. In both cases, keep the MCP API key and
+webhook secret out of GitHub and out of bot-generated responses.
+
 For Render, create a Blueprint from this repository's `render.yaml`. Enter
 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `MCP_API_KEY` when prompted.
 Render supplies `PORT`; no `.env` file is deployed. The public `/health`
