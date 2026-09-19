@@ -184,6 +184,27 @@ If the bot runs as a separate service, set `GROK_WEBHOOK_URL` to that service's
 public HTTPS webhook URL instead. In both cases, keep the MCP API key and
 webhook secret out of GitHub and out of bot-generated responses.
 
+### Agent collaboration without webhooks
+
+Claude and Codex can collaborate through the database without receiving
+webhooks. Create a task for another agent, have that agent claim it, then
+attach the resulting analysis:
+
+```text
+create_analysis_task(project_id, idea_id, requested_by, prompt)
+list_analysis_tasks(project_id, status="pending")
+claim_analysis_task(task_id, assigned_to)
+create_analysis(project_id, author, summary, full_text, references)
+complete_analysis_task(task_id, result_analysis_id, completed_by)
+```
+
+Task claiming is atomic: only one agent can claim a pending task. Use stable
+agent names such as `agent:claude` and `agent:codex` in `requested_by`,
+`assigned_to`, `author`, and `completed_by`. Agents should poll
+`list_analysis_tasks` when they begin work or when a human asks them to check
+for new work. The task migration is
+`supabase/migrations/20260920000001_analysis_tasks.sql`.
+
 For Render, create a Blueprint from this repository's `render.yaml`. Enter
 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `MCP_API_KEY` when prompted.
 Render supplies `PORT`; no `.env` file is deployed. The public `/health`
@@ -205,6 +226,7 @@ three environment variables in the service dashboard.
 | Evidence | `create_evidence`, `link_evidence_to_hypothesis`, `list_evidence`, `get_evidence` |
 | Analyses | `create_analysis`, `list_analyses`, `get_analysis` |
 | Experiments | `create_experiment`, `list_experiments`, `get_experiment`, `update_experiment_status` |
+| Collaboration | `create_analysis_task`, `list_analysis_tasks`, `claim_analysis_task`, `complete_analysis_task` |
 
 Human-readable IDs (`IDEA-001`, `HYP-014`, `ANL-003`, `EXP-007` …) are allocated automatically.
 

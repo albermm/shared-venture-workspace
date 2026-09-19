@@ -50,6 +50,12 @@ import {
   getExperimentTool,
   updateExperimentStatusTool,
 } from "./tools/experiments.js";
+import {
+  createAnalysisTaskTool,
+  listAnalysisTasksTool,
+  claimAnalysisTaskTool,
+  completeAnalysisTaskTool,
+} from "./tools/analysis-tasks.js";
 
 const REQUIRED_API_KEY = process.env.MCP_API_KEY;
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : null;
@@ -90,6 +96,11 @@ const tools: ToolDef[] = [
   listExperimentsTool,
   getExperimentTool,
   updateExperimentStatusTool,
+  // Shared analysis work queue
+  createAnalysisTaskTool,
+  listAnalysisTasksTool,
+  claimAnalysisTaskTool,
+  completeAnalysisTaskTool,
 ];
 
 function zodToJsonSchema(schema: z.ZodObject<any>) {

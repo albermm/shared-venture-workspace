@@ -36,6 +36,7 @@ export type ExperimentStatus =
   | "cancelled";
 
 export type AnalysisRefType = "evidence" | "hypothesis" | "analysis";
+export type AnalysisTaskStatus = "pending" | "claimed" | "completed" | "cancelled";
 
 export interface Project {
   id: string;
@@ -116,6 +117,21 @@ export interface AnalysisReference {
   analysis_id: string;
   ref_type: AnalysisRefType;
   ref_id: string;
+}
+
+export interface AnalysisTask {
+  id: string;
+  project_id: string;
+  idea_id: string;
+  requested_by: string;
+  assigned_to: string | null;
+  prompt: string;
+  status: AnalysisTaskStatus;
+  result_analysis_id: string | null;
+  claimed_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Experiment {
