@@ -104,6 +104,13 @@ then call this workspace's `/call` endpoint to fetch context and write back
 hypotheses, evidence, analyses, or experiments. This is an outbound webhook,
 not MCP push transport, so the bot must provide a public POST endpoint.
 
+This same Render service can receive the event at
+`POST /webhooks/venture`. Set `GROK_WEBHOOK_URL` to
+`https://shared-venture-workspace.onrender.com/webhooks/venture` when using
+the built-in receiver. It requires the HMAC signature and returns `202` for a
+valid event. The receiver is the handoff point where your colleague can add
+the Grok bot processing code.
+
 For Render, create a Blueprint from this repository's `render.yaml`. Enter
 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `MCP_API_KEY` when prompted.
 Render supplies `PORT`; no `.env` file is deployed. The public `/health`

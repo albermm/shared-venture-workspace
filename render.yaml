@@ -14,3 +14,7 @@ services:
         sync: false
       - key: MCP_API_KEY
         sync: false
+      - key: GROK_WEBHOOK_URL
+        sync: false
+      - key: GROK_WEBHOOK_SECRET
+        sync: false
