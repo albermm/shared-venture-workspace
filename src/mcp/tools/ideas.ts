@@ -1,5 +1,6 @@
 import { z } from "zod";
 import * as ideasRepo from "../../repositories/ideas.js";
+import { notifyIdeaCreated } from "../../services/webhooks.js";
 
 export const createIdeaTool = {
   name: "create_idea",
@@ -23,6 +24,7 @@ export const createIdeaTool = {
     created_by: string;
   }) => {
     const idea = await ideasRepo.createIdea(input);
+    await notifyIdeaCreated(idea);
     return {
       content: [
         {

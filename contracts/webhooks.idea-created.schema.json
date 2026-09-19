@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shared-venture-workspace.example/contracts/webhooks/idea-created.schema.json",
+  "title": "Shared Venture Workspace idea.created webhook",
+  "type": "object",
+  "required": ["event", "event_id", "occurred_at", "data"],
+  "properties": {
+    "event": { "const": "idea.created" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "data": {
+      "type": "object",
+      "required": ["idea"],
+      "properties": {
+        "idea": {
+          "type": "object",
+          "required": ["id", "project_id", "human_id", "title", "status", "created_by", "created_at"],
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "project_id": { "type": "string", "format": "uuid" },
+            "human_id": { "type": "string", "pattern": "^IDEA-[0-9]{3,}$" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "rationale": { "type": ["string", "null"] },
+            "status": { "enum": ["draft", "active", "parked", "rejected"] },
+            "parent_idea_id": { "type": ["string", "null"], "format": "uuid" },
+            "created_by": { "type": "string" },
+            "created_at": { "type": "string", "format": "date-time" },
+            "tags": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

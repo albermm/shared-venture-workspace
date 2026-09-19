@@ -89,6 +89,21 @@ Give bots:
 
 They call `POST /call` with `{ "tool": "...", "arguments": { ... } }` and header `X-API-Key`.
 
+### Bot webhook notifications
+
+Set `GROK_WEBHOOK_URL` on the workspace service to notify a bot or relay when
+an idea is created. The server sends `POST` JSON with `event: "idea.created"`
+and the complete idea under `data.idea`. If `GROK_WEBHOOK_SECRET` is set, the
+request includes `X-Webhook-Signature: sha256=<HMAC-SHA256>` calculated over
+the exact request body. The event contract is in
+`contracts/webhooks.idea-created.schema.json`.
+
+Webhook delivery is best effort and times out after five seconds; an
+unavailable bot does not roll back the database write. The receiving bot can
+then call this workspace's `/call` endpoint to fetch context and write back
+hypotheses, evidence, analyses, or experiments. This is an outbound webhook,
+not MCP push transport, so the bot must provide a public POST endpoint.
+
 For Render, create a Blueprint from this repository's `render.yaml`. Enter
 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `MCP_API_KEY` when prompted.
 Render supplies `PORT`; no `.env` file is deployed. The public `/health`
